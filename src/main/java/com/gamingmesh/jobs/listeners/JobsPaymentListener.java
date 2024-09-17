@@ -114,7 +114,7 @@ import com.gamingmesh.jobs.container.blockOwnerShip.BlockOwnerShip;
 import com.gamingmesh.jobs.container.blockOwnerShip.BlockOwnerShip.ownershipFeedback;
 import com.gamingmesh.jobs.hooks.HookManager;
 import com.gamingmesh.jobs.hooks.JobsHook;
-import com.gamingmesh.jobs.hooks.pyroFishingPro.PyroFishingProManager;
+import com.gamingmesh.jobs.hooks.PyroFishingPro.PyroFishingProManager;
 import com.gamingmesh.jobs.stuff.Util;
 import com.gmail.nossr50.config.experience.ExperienceConfig;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
@@ -448,8 +448,13 @@ public final class JobsPaymentListener implements Listener {
             return;
 
         // Checks whether the broken block has been tracked by BlockTracker
-        if (JobsHook.BlockTracker.isEnabled() && Jobs.getGCManager().useBlockProtectionBlockTracker && HookManager.getBlockTrackerManager().isTracked(block)) {
-            return;
+        if (Jobs.getGCManager().useBlockProtectionBlockTracker) {
+            if (JobsHook.PlayerBlockTracker.isEnabled() && HookManager.getPlayerBlockTrackerManager().isTracked(block)) {
+                return;
+            }
+            if (JobsHook.BlockTracker.isEnabled() && HookManager.getBlockTrackerManager().isTracked(block)) {
+                return;
+            }
         }
 
         Player player = event.getPlayer();
@@ -1204,7 +1209,7 @@ public final class JobsPaymentListener implements Listener {
         }
 
         // only care about first
-        if (uuid == null && !data.isEmpty()) {
+        if (uuid == null) {
             MetadataValue value = data.get(0);
             try {
                 uuid = UUID.fromString(value.asString());
@@ -1212,9 +1217,6 @@ public final class JobsPaymentListener implements Listener {
                 return;
             }
         }
-
-        if (uuid == null)
-            return;
 
         Player player = Bukkit.getPlayer(uuid);
         if (player == null || !player.isOnline())
@@ -1667,9 +1669,6 @@ public final class JobsPaymentListener implements Listener {
             return;
 
         ItemStack currentItem = event.getItem();
-
-        if (currentItem == null)
-            return;
 
         if (currentItem.getItemMeta() instanceof PotionMeta) {
             if (Version.isCurrentEqualOrHigher(Version.v1_9_R1) && ((PotionMeta) currentItem.getItemMeta()).getBasePotionData() != null)
