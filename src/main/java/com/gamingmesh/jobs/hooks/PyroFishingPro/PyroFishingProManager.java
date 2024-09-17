@@ -1,4 +1,4 @@
-package com.gamingmesh.jobs.hooks.pyroFishingPro;
+package com.gamingmesh.jobs.hooks.PyroFishingPro;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

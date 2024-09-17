@@ -1,4 +1,4 @@
-package com.gamingmesh.jobs.hooks.blockTracker;
+package com.gamingmesh.jobs.hooks.BlockTracker;
 
 import org.bukkit.block.Block;
 import org.bukkit.plugin.Plugin;

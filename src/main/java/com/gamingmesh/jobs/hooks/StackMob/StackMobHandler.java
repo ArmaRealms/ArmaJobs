@@ -1,4 +1,4 @@
-package com.gamingmesh.jobs.hooks.stackMob;
+package com.gamingmesh.jobs.hooks.StackMob;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -1,4 +1,4 @@
-package com.gamingmesh.jobs.hooks.wildStacker;
+package com.gamingmesh.jobs.hooks.WildStacker;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

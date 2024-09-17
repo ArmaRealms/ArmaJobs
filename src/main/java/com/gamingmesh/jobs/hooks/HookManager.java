@@ -1,7 +1,8 @@
 package com.gamingmesh.jobs.hooks;
 
-import com.gamingmesh.jobs.hooks.blockTracker.BlockTrackerManager;
-import com.gamingmesh.jobs.hooks.pyroFishingPro.PyroFishingProManager;
+import com.gamingmesh.jobs.hooks.PlayerBlockTracker.PlayerBlockTrackerManager;
+import com.gamingmesh.jobs.hooks.BlockTracker.BlockTrackerManager;
+import com.gamingmesh.jobs.hooks.PyroFishingPro.PyroFishingProManager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,8 +14,8 @@ import com.gamingmesh.jobs.hooks.MyPet.MyPetManager;
 import com.gamingmesh.jobs.hooks.MythicMobs.MythicMobInterface;
 import com.gamingmesh.jobs.hooks.MythicMobs.MythicMobs5;
 import com.gamingmesh.jobs.hooks.WorldGuard.WorldGuardManager;
-import com.gamingmesh.jobs.hooks.stackMob.StackMobHandler;
-import com.gamingmesh.jobs.hooks.wildStacker.WildStackerHandler;
+import com.gamingmesh.jobs.hooks.StackMob.StackMobHandler;
+import com.gamingmesh.jobs.hooks.WildStacker.WildStackerHandler;
 
 import net.Zrips.CMILib.Messages.CMIMessages;
 import net.Zrips.CMILib.Version.Schedulers.CMIScheduler;
@@ -29,6 +30,7 @@ public class HookManager {
     private static WildStackerHandler wildStackerHandler;
     private static BlockTrackerManager blockTrackerManager;
     private static PyroFishingProManager pyroFishingProManager;
+    private static PlayerBlockTrackerManager playerBlockTrackerManager;
 
     private static final Jobs PLUGIN = JavaPlugin.getPlugin(Jobs.class);
 
@@ -45,6 +47,7 @@ public class HookManager {
             setWildStackerHandler();
             setBlockTrackerManager();
             setPyroFishingProManager();
+            setPlayerBlockTrackerManager();
         });
     }
 
@@ -114,6 +117,10 @@ public class HookManager {
         return blockTrackerManager;
     }
 
+    public static PlayerBlockTrackerManager getPlayerBlockTrackerManager() {
+        return playerBlockTrackerManager;
+    }
+
     private static boolean setWorldGuard() {
         if (JobsHook.WorldGuard.isEnabled()) {
             worldGuardManager = new WorldGuardManager();
@@ -180,6 +187,13 @@ public class HookManager {
         if (JobsHook.PyroFishingPro.isEnabled()) {
             pyroFishingProManager = new PyroFishingProManager();
             CMIMessages.consoleMessage("&e" + JobsHook.PyroFishingPro + " detected.");
+        }
+    }
+
+    private static void setPlayerBlockTrackerManager() {
+        if (JobsHook.PlayerBlockTracker.isEnabled()) {
+            playerBlockTrackerManager = new PlayerBlockTrackerManager();
+            CMIMessages.consoleMessage("&e" + JobsHook.PlayerBlockTracker + " detected.");
         }
     }
 }
