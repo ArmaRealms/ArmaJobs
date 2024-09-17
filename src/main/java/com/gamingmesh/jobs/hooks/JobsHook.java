@@ -1,8 +1,7 @@
 package com.gamingmesh.jobs.hooks;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import com.gamingmesh.jobs.Jobs;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public enum JobsHook {
     MyPet,
@@ -12,20 +11,23 @@ public enum JobsHook {
     MythicMobs,
     mcMMO,
     BlockTracker,
-    PyroFishingPro;
+    PyroFishingPro,
+    PlayerBlockTracker;
 
     private Boolean enabled;
     private Boolean present;
 
     public boolean isEnabled() {
-	if (enabled == null) 
-	    enabled = JavaPlugin.getPlugin(Jobs.class).getServer().getPluginManager().isPluginEnabled(name());	
-	return enabled;
+        if (enabled == null) {
+            enabled = JavaPlugin.getPlugin(Jobs.class).getServer().getPluginManager().isPluginEnabled(name());
+        }
+        return enabled;
     }
 
     public boolean isPresent() {
-	if (present == null) 
-	    present = JavaPlugin.getPlugin(Jobs.class).getServer().getPluginManager().getPlugin(name()) != null;	
-	return present;
+        if (present == null) {
+            present = JavaPlugin.getPlugin(Jobs.class).getServer().getPluginManager().getPlugin(name()) != null;
+        }
+        return present;
     }
 }

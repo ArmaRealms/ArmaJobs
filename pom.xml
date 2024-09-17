@@ -38,13 +38,13 @@
 		<dependency>
 			<groupId>com.gmail.nossr50.mcMMO</groupId>
 			<artifactId>mcMMO</artifactId>
-			<version>2.2.004</version>
+			<version>2.2.020</version>
 		</dependency>
 		<!-- Vault -->
 		<dependency>
 			<groupId>com.github.MilkBowl</groupId>
 			<artifactId>VaultAPI</artifactId>
-			<version>1.7</version>
+			<version>1.7.1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -136,7 +136,7 @@
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
-			<version>2.10.9</version>
+			<version>2.11.6</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -192,6 +192,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/libs/CMILib1.5.0.3.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>com.gestankbratwurst</groupId>
+			<artifactId>PlayerBlockTracker</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/libs/PlayerBlockTracker-1.0.2-SNAPSHOT.jar</systemPath>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -238,7 +245,7 @@
 	<!-- Builds Plugin -->
 	<build>
 		<defaultGoal>clean package</defaultGoal>
-		<finalName>Jobs${project.version}</finalName>
+		<finalName>Jobs-${project.version}</finalName>
 		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 		<resources>
 			<resource>
