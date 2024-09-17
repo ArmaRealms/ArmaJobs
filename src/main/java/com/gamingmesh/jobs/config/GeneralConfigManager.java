@@ -1,17 +1,17 @@
 /**
  * Jobs Plugin for Bukkit
  * Copyright (C) 2011 Zak Ford <zak.j.ford@gmail.com>
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,6 +20,7 @@ package com.gamingmesh.jobs.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -306,7 +307,7 @@ public class GeneralConfigManager {
 
     /**
      * Method to load the general configuration
-     * 
+     *
      * loads from Jobs/generalConfig.yml
      */
     private void loadGeneralSettings() {
@@ -907,7 +908,7 @@ public class GeneralConfigManager {
             "For how long in days to keep block protection data in data base", "This will clean block data which ones have -1 as cooldown value",
             "Data base cleanup will be performed on each server startup", "This cant be more then 14 days");
         BlockProtectionDays = c.get("ExploitProtections.General.PlaceAndBreak.KeepDataFor", c.getC().getInt("ExploitProtections.General.KeepDataFor", 14));
-        BlockProtectionDays = BlockProtectionDays > 14 ? 14 : BlockProtectionDays;
+        BlockProtectionDays = Math.min(BlockProtectionDays, 14);
 
         /*c.addComment("ExploitProtections.General.AllowBreakPaymentForOreGenerators", "It allows you to pay for ore generator plugins continuously"
         		+ " once you have broken the block in one place.");
@@ -1064,7 +1065,7 @@ public class GeneralConfigManager {
                     try {
                         int parsed = Integer.parseInt(sSplit[i]);
                         colorRGB[i] = (parsed > 255 || parsed < 0) ? 1 : parsed;
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                     }
                 }
 
@@ -1160,7 +1161,7 @@ public class GeneralConfigManager {
 
         helpPageBehavior.clear();
         if (c.getC().isList("Commands.Jobs")) {
-            helpPageBehavior.addAll(c.get("Commands.Jobs", Arrays.asList("Default")));
+            helpPageBehavior.addAll(c.get("Commands.Jobs", Collections.singletonList("Default")));
         } else {
             helpPageBehavior.add(c.get("Commands.Jobs", "Default"));
         }

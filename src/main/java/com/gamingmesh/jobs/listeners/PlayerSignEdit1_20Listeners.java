@@ -1,9 +1,5 @@
 package com.gamingmesh.jobs.listeners;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,8 +21,6 @@ public class PlayerSignEdit1_20Listeners implements Listener {
 
     public PlayerSignEdit1_20Listeners() {
     }
-
-    Set<UUID> signEditCache = new HashSet<UUID>();
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerSignOpenEvent(PlayerSignOpenEvent event) {

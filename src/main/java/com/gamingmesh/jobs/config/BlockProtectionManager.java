@@ -127,11 +127,7 @@ public class BlockProtectionManager {
         if (!Jobs.getGCManager().useBlockProtection)
             return;
         String v = loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
-        ConcurrentHashMap<String, BlockProtection> locations = tempCache.get(loc.getWorld());
-        if (locations == null) {
-            locations = new ConcurrentHashMap<>();
-            tempCache.put(loc.getWorld(), locations);
-        }
+        ConcurrentHashMap<String, BlockProtection> locations = tempCache.computeIfAbsent(loc.getWorld(), k -> new ConcurrentHashMap<>());
 
         locations.put(v, Bp);
     }
@@ -259,7 +255,7 @@ public class BlockProtectionManager {
 
                 if ((time > System.currentTimeMillis() || bp.isPaid()) && bp.getAction() != DBAction.DELETE) {
                     if (inform && player.canGetPaid(info)) {
-                        int sec = Math.round((time - System.currentTimeMillis()) / 1000L);
+                        int sec = Math.round((float) (time - System.currentTimeMillis()) / 1000L);
                         CMIActionBar.send(player.getPlayer(), Jobs.getLanguage().getMessage("message.blocktimer", "[time]", sec));
                     }
 
@@ -274,7 +270,7 @@ public class BlockProtectionManager {
         } else if (info.getType() == ActionType.PLACE) {
             BlockProtection bp = getBp(block.getLocation());
             if (bp != null) {
-                Long time = bp.getTime();
+                long time = bp.getTime();
                 Integer cd = Jobs.getExploitManager().getBlockProtectionTime(info.getType(), block);
                 if (time != -1L) {
                     if (time < System.currentTimeMillis() && bp.getAction() != DBAction.DELETE) {
@@ -284,7 +280,7 @@ public class BlockProtectionManager {
 
                     if ((time > System.currentTimeMillis() || bp.isPaid()) && bp.getAction() != DBAction.DELETE) {
                         if (inform && player.canGetPaid(info)) {
-                            int sec = Math.round((time - System.currentTimeMillis()) / 1000L);
+                            int sec = Math.round((float) (time - System.currentTimeMillis()) / 1000L);
                             CMIActionBar.send(player.getPlayer(), Jobs.getLanguage().getMessage("message.blocktimer", "[time]", sec));
                         }
 

@@ -625,13 +625,13 @@ public class JobsListener implements Listener {
             PlayerInventory inv = player.getInventory();
 
             if (newArmorType == ArmorTypes.HELMET &&
-                (equipping ? inv.getHelmet() == null : inv.getHelmet() != null) ||
+                (equipping == (inv.getHelmet() == null)) ||
                 (newArmorType == ArmorTypes.CHESTPLATE || newArmorType == ArmorTypes.ELYTRA) &&
-                    (equipping ? inv.getChestplate() == null : inv.getChestplate() != null) ||
+                    (equipping == (inv.getChestplate() == null)) ||
                 newArmorType == ArmorTypes.LEGGINGS &&
-                    (equipping ? inv.getLeggings() == null : inv.getLeggings() != null) ||
+                    (equipping == (inv.getLeggings() == null)) ||
                 newArmorType == ArmorTypes.BOOTS &&
-                    (equipping ? inv.getBoots() == null : inv.getBoots() != null)) {
+                    (equipping == (inv.getBoots() == null))) {
                 JobsArmorChangeEvent armorEquipEvent = new JobsArmorChangeEvent(player, EquipMethod.SHIFT_CLICK, newArmorType, equipping ? null : event
                     .getCurrentItem(), equipping ? event.getCurrentItem() : null);
                 plugin.getServer().getPluginManager().callEvent(armorEquipEvent);
@@ -724,7 +724,7 @@ public class JobsListener implements Listener {
                         continue;
 
                     Dispenser dispenser = (Dispenser) event.getBlock().getState();
-                    BlockFace directionFacing = null;
+                    BlockFace directionFacing;
                     if (Version.isCurrentEqualOrLower(Version.v1_13_R2)) {
                         org.bukkit.material.Dispenser dis = (org.bukkit.material.Dispenser) dispenser.getData();
                         directionFacing = dis.getFacing();
@@ -777,6 +777,6 @@ public class JobsListener implements Listener {
 
     @EventHandler
     public void playerItemBreakEvent(InventoryClickEvent event) {
-        Jobs.getPlayerManager().resetItemBonusCache(((Player) event.getWhoClicked()).getUniqueId());
+        Jobs.getPlayerManager().resetItemBonusCache(event.getWhoClicked().getUniqueId());
     }
 }
