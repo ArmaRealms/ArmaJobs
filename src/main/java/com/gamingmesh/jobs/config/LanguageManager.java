@@ -229,9 +229,9 @@ public class LanguageManager {
             c.get("command.editpoints.help.info", "Edit player's points.");
             c.get("command.editpoints.help.args", "set/add/take [playername] [amount]");
             Jobs.getGCManager().getCommandArgs().put("editpoints", Arrays.asList("set%%add%%take", "[playername]"));
-            c.get("command.editpoints.output.set", "&ePlayers (&6%playerdisplayname%&e) points was set to &6%amount%");
-            c.get("command.editpoints.output.add", "&ePlayer (&6%playerdisplayname%&e) got additional &6%amount% &epoints. Now they have &6%total%");
-            c.get("command.editpoints.output.take", "&ePlayer (&6%playerdisplayname%&e) lost &6%amount% &epoints. Now they have &6%total%");
+            c.get("command.editpoints.output.set", "&ePlayers (&6%playerdisplayname%&e) points were set to &6%amount%");
+            c.get("command.editpoints.output.add", "&ePlayer (&6%playerdisplayname%&e) got &6%amount% &epoints. Balance &6%total%");
+            c.get("command.editpoints.output.take", "&ePlayer (&6%playerdisplayname%&e) lost &6%amount% &epoints. Balance &6%total%");
 
             c.get("command.editjobs.help.info", "Edit current jobs.");
             c.get("command.editjobs.help.args", "");
@@ -294,7 +294,7 @@ public class LanguageManager {
 
             c.get("command.recalculatepermissions.help.info", "Reset players permission cache");
             c.get("command.recalculatepermissions.help.args", "(playername)");
-            
+
             c.get("command.stats.help.info", "Show the level you are in each job you are part of.");
             c.get("command.stats.help.args", "[playername]");
             Jobs.getGCManager().getCommandArgs().put("stats", Arrays.asList("[playername]"));
@@ -559,8 +559,8 @@ public class LanguageManager {
             c.get("command.area.help.removeUsage", "&eUsage: &6/Jobs area remove [areaName]");
             c.get("command.area.output.addedNew", "&eAdded a new restricted area with &6%bonus% &ebonus");
             c.get("command.area.output.removed", "&eRemoved the restricted area &6%name%");
-            c.get("command.area.output.list", "&e%number%&a. &e%areaname% &e%worldname% (&a%x1%:%y1%:%z1%/&e%x2%:%y2%:%z2%) &6%bonus%");
-            c.get("command.area.output.wgList", "&e%number%&a. WorldGuard: &e%areaname% &6%bonus%");
+            c.get("command.area.output.lists", "&7%number%&f. &7%areaname% &f%worldname% &7(&a%x1%:%y1%:%z1%&7/&e%x2%:%y2%:%z2%&7) &2%money% &6%points% &e%exp%");
+            c.get("command.area.output.wgLists", "&7%number%&f. WorldGuard: &7%areaname% &2%money% &6%points% &e%exp%");
             c.get("command.area.output.noAreas", "&eThere are no saved restricted areas");
             c.get("command.area.output.noAreasByLoc", "&eThere are no restricted areas in this location");
             c.get("command.area.output.areaList", "&eRestricted areas by your location: &6%list%");
@@ -646,15 +646,21 @@ public class LanguageManager {
 
             c.get("command.toggle.help.info", "Toggles payment output on action bar or bossbar.");
             c.get("command.toggle.help.args", "actionbar/bossbar");
-            Jobs.getGCManager().getCommandArgs().put("toggle", Arrays.asList("actionbar%%bossbar"));
+            Jobs.getGCManager().getCommandArgs().put("toggle", Arrays.asList("actionbar%%bossbar%%chattext", "off%%rapid%%batched"));
             c.get("command.toggle.output.turnedoff", "&4This feature is turned off!");
-            
+
+            c.get("command.toggle.output.paid.main", "&aYou got:");
+            c.get("command.toggle.output.paid.money", "&e[amount] money");
+            c.get("command.toggle.output.paid.exp", "&7[exp] exp");
+            c.get("command.toggle.output.paid.points", "&6[points] points");
+
             c.get("command.toggle.output.paid.ACmoney", "&e+[amount]$ ");
             c.get("command.toggle.output.paid.ACexp", "&7+[exp]XP ");
             c.get("command.toggle.output.paid.ACpoints", "&6+[points]pts ");
-            
-            c.get("command.toggle.output.on", "&aToggled: &aON");
-            c.get("command.toggle.output.off", "&aToggled: &4OFF");
+
+            c.get("command.toggle.output.Rapid", "&7[type]&a: &7Rapid");
+            c.get("command.toggle.output.Batched", "&7[type]&a: &fBatched");
+            c.get("command.toggle.output.Off", "&7[type]&a: &6Off");
 
             c.get("command.howmuch.help.info", "Check potential payment by target entity or block");
             c.get("command.howmuch.help.args", "");

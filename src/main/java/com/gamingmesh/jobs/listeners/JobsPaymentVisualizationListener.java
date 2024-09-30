@@ -31,7 +31,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.api.JobsInstancePaymentEvent;
+import com.gamingmesh.jobs.api.JobsPaymentEvent;
 import com.gamingmesh.jobs.container.CurrencyType;
+import com.gamingmesh.jobs.container.MessageToggleState;
 import com.gamingmesh.jobs.stuff.ToggleBarHandling;
 
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
@@ -91,6 +93,69 @@ public class JobsPaymentVisualizationListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onJobsPaymentEvent(JobsPaymentEvent event) {
+        if (event.isCancelled())
+            return;
+        showBatchedActionBarChatMessage(event);
+    }
+
+    private static void showBatchedActionBarChatMessage(JobsPaymentEvent event) {
+
+        if (event.getPlayer() == null || !event.getPlayer().isOnline() || event.getPayment().isEmpty())
+            return;
+
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null)
+            return;
+
+        if (!Jobs.getGeneralConfigManager().ActionBarEnabled) {
+            showChatMessage(player, event.getPayment());
+            return;
+        }
+
+        MessageToggleState state = ToggleBarHandling.getActionBarState(event.getPlayer().getUniqueId());
+
+        if (!state.equals(MessageToggleState.Batched)) {
+            showChatMessage(player, event.getPayment());
+            return;
+        }
+
+        String message = generateDelayedMessage(event.getPayment());
+        if (!message.isEmpty())
+            CMIActionBar.send(player, message);
+        return;
+    }
+
+    private static void showChatMessage(Player player, Map<CurrencyType, Double> payment) {
+        MessageToggleState chatState = ToggleBarHandling.getChatTextState(player.getUniqueId());
+        if (chatState.equals(MessageToggleState.Off))
+            return;
+        String message = generateDelayedMessage(payment);
+
+        if (!message.isEmpty())
+            player.sendMessage(message);
+    }
+
+    private static String generateDelayedMessage(Map<CurrencyType, Double> payment) {
+
+        String message = Jobs.getLanguage().getMessage("command.toggle.output.paid.main");
+        double money = payment.get(CurrencyType.MONEY);
+        if (money != 0D)
+            message += " " + Jobs.getLanguage().getMessage("command.toggle.output.paid.money", "[amount]", String.format(Jobs.getGCManager().getDecimalPlacesMoney(), money));
+
+        double points = payment.get(CurrencyType.POINTS);
+        if (points != 0D)
+            message += " " + Jobs.getLanguage().getMessage("command.toggle.output.paid.points", "[points]", String.format(Jobs.getGCManager().getDecimalPlacesPoints(), points));
+
+        double exp = payment.get(CurrencyType.EXP);
+        if (exp != 0D)
+            message += " " + Jobs.getLanguage().getMessage("command.toggle.output.paid.exp", "[exp]", String.format(Jobs.getGCManager().getDecimalPlacesExp(), exp));
+
+        return message;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onJobsInstancePaymentBossEvent(JobsInstancePaymentEvent event) {
 
         if (event.getPlayer() == null || !event.getPlayer().isOnline())
@@ -99,11 +164,40 @@ public class JobsPaymentVisualizationListener implements Listener {
         if (!Version.getCurrent().isHigher(Version.v1_8_R3))
             return;
 
+        // Whether or not to show this on player actionbar or on chat
+        MessageToggleState state = ToggleBarHandling.getBossBarState(event.getPlayer().getUniqueId());
+
+        if (!state.equals(MessageToggleState.Rapid))
+            return;
+
+        Jobs.getBBManager().ShowJobProgression(Jobs.getPlayerManager().getJobsPlayer(event.getPlayer().getUniqueId()));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onJobsPaymentEventBossBar(JobsPaymentEvent event) {
+        if (event.isCancelled())
+            return;
+
+        if (event.getPlayer() == null || !event.getPlayer().isOnline())
+            return;
+
+        if (!Version.getCurrent().isHigher(Version.v1_8_R3))
+            return;
+
+        // Whether or not to show this on player actionbar or on chat
+        MessageToggleState state = ToggleBarHandling.getBossBarState(event.getPlayer().getUniqueId());
+
+        if (!state.equals(MessageToggleState.Batched))
+            return;
+
         Jobs.getBBManager().ShowJobProgression(Jobs.getPlayerManager().getJobsPlayer(event.getPlayer().getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJobsInstancePaymentActionBarEvent(JobsInstancePaymentEvent event) {
+
+        if (!Jobs.getGeneralConfigManager().ActionBarEnabled)
+            return;
 
         if (event.getPlayer() == null || !event.getPlayer().isOnline())
             return;
@@ -114,9 +208,9 @@ public class JobsPaymentVisualizationListener implements Listener {
             return;
 
         // Whether or not to show this on player actionbar or on chat
-        boolean showInActionbar = ToggleBarHandling.getActionBarToggle().getOrDefault(player.getUniqueId(), Jobs.getGCManager().ActionBarsMessageByDefault);
+        MessageToggleState state = ToggleBarHandling.getActionBarState(event.getPlayer().getUniqueId());
 
-        if (!showInActionbar)
+        if (!state.equals(MessageToggleState.Rapid))
             return;
 
         paymentCache cached = getPaymentCache(player.getUniqueId(), event.getPayment());

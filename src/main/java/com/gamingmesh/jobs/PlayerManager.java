@@ -62,6 +62,7 @@ import com.gamingmesh.jobs.dao.JobsDAOData;
 import com.gamingmesh.jobs.economy.PaymentData;
 import com.gamingmesh.jobs.hooks.HookManager;
 import com.gamingmesh.jobs.i18n.Language;
+import com.gamingmesh.jobs.stuff.ToggleBarHandling;
 import com.gamingmesh.jobs.stuff.Util;
 
 import net.Zrips.CMILib.ActionBar.CMIActionBar;
@@ -133,8 +134,26 @@ public class PlayerManager {
 
     public void addPlayerToCache(JobsPlayer jPlayer) {
         playersUUIDCache.putIfAbsent(jPlayer.playerUUID, jPlayer);
-        if (jPlayer.getName() != null)
+        if (jPlayer.getName() == null)
+            return;
+
+        // On data load check for name duplication
+        if (!Jobs.fullyLoaded) {
+            // Checking for existing record by same name
+            JobsPlayer oldRecord = playersNameCache.get(jPlayer.getName().toLowerCase());
+            if (oldRecord != null) {
+                CMIMessages.consoleMessage("&cDuplicate in database for (&f" + jPlayer.getName() + "&c) -> (&f" + jPlayer.getUniqueId() + "&c) <-> (&f" + oldRecord.getUniqueId() + "&c)");
+                // Using newest record
+                if (jPlayer.getSeen() > oldRecord.getSeen())
+                    playersNameCache.put(jPlayer.getName().toLowerCase(), jPlayer);
+                return;
+            }
             playersNameCache.putIfAbsent(jPlayer.getName().toLowerCase(), jPlayer);
+        } else {
+            // Add player to cache independent if there was other record by this name, we should use latest record
+            playersNameCache.put(jPlayer.getName().toLowerCase(), jPlayer);
+        }
+
     }
 
     public void addPlayer(JobsPlayer jPlayer) {
@@ -268,6 +287,8 @@ public class PlayerManager {
         if (info != null) {
             jPlayer.setDoneQuests(info.getQuestsDone());
             jPlayer.setQuestProgressionFromString(info.getQuestProgression());
+
+            ToggleBarHandling.recordPlayerOptionsFromInt(jPlayer.getUniqueId(), info.getMessageOptions());
         }
 
         Jobs.getJobsDAO().loadLog(jPlayer);
@@ -426,6 +447,10 @@ public class PlayerManager {
         jPlayer.setUserId(info.getID());
         jPlayer.setDoneQuests(info.getQuestsDone());
         jPlayer.setQuestProgressionFromString(info.getQuestProgression());
+
+        ToggleBarHandling.recordPlayerOptionsFromInt(jPlayer.getUniqueId(), info.getMessageOptions());
+
+        jPlayer.setSeen(info.getSeen());
 
         if (jobs != null) {
             for (JobsDAOData jobdata : jobs) {
@@ -1129,26 +1154,26 @@ public class PlayerManager {
         McMMO, PetPay, NearSpawner, Permission, Global, Dynamic, Item, Area
     }
 
-    public Boost getFinalBonus(JobsPlayer player, Job prog, boolean force, boolean getall) {
-        return getFinalBonus(player, prog, null, null, force, getall);
+    public Boost getFinalBonus(JobsPlayer player, Job job, boolean force, boolean getall) {
+        return getFinalBonus(player, job, null, null, force, getall);
     }
 
-    public Boost getFinalBonus(JobsPlayer player, Job prog, boolean force) {
-        return getFinalBonus(player, prog, null, null, force, false);
+    public Boost getFinalBonus(JobsPlayer player, Job job, boolean force) {
+        return getFinalBonus(player, job, null, null, force, false);
     }
 
-    public Boost getFinalBonus(JobsPlayer player, Job prog) {
-        return getFinalBonus(player, prog, null, null, false, false);
+    public Boost getFinalBonus(JobsPlayer player, Job job) {
+        return getFinalBonus(player, job, null, null, false, false);
     }
 
-    public Boost getFinalBonus(JobsPlayer player, Job prog, Entity ent, LivingEntity victim) {
-        return getFinalBonus(player, prog, ent, victim, false, false);
+    public Boost getFinalBonus(JobsPlayer player, Job job, Entity ent, LivingEntity victim) {
+        return getFinalBonus(player, job, ent, victim, false, false);
     }
 
-    public Boost getFinalBonus(JobsPlayer player, Job prog, Entity ent, LivingEntity victim, boolean force, boolean getall) {
+    public Boost getFinalBonus(JobsPlayer player, Job job, Entity ent, LivingEntity victim, boolean force, boolean getall) {
         Boost boost = new Boost();
 
-        if (player == null || !player.isOnline() || prog == null)
+        if (player == null || !player.isOnline() || job == null)
             return boost;
 
         Player pl = player.getPlayer();
@@ -1192,18 +1217,18 @@ public class PlayerManager {
                 boost.add(BoostOf.NearSpawner, new BoostMultiplier().add(amount));
         }
 
-        boost.add(BoostOf.Permission, getBoost(player, prog, force));
-        boost.add(BoostOf.Global, prog.getBoost());
+        boost.add(BoostOf.Permission, getBoost(player, job, force));
+        boost.add(BoostOf.Global, job.getBoost());
 
         if (Jobs.getGCManager().useDynamicPayment)
-            boost.add(BoostOf.Dynamic, new BoostMultiplier().add(prog.getBonus()));
+            boost.add(BoostOf.Dynamic, new BoostMultiplier().add(job.getBonus()));
 
         if (pl != null) {
-            boost.add(BoostOf.Item, getItemBoostNBT(pl, prog));
+            boost.add(BoostOf.Item, getItemBoostNBT(pl, job));
         }
 
         if (!Jobs.getRestrictedAreaManager().getRestrictedAreas().isEmpty())
-            boost.add(BoostOf.Area, new BoostMultiplier().add(Jobs.getRestrictedAreaManager().getRestrictedMultiplier(pl)));
+            boost.add(BoostOf.Area, Jobs.getRestrictedAreaManager().getRestrictedMultipliers(player.getJobProgression(job), pl));
 
         return boost;
     }
