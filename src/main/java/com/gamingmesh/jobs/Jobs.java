@@ -936,7 +936,7 @@ public final class Jobs extends JavaPlugin {
         if (dao != null && Jobs.getGeneralConfigManager().ExploreSaveIntoDatabase)
             dao.saveExplore();
 
-        blockOwnerShipsMaterial.values().forEach(BlockOwnerShip::save);
+        BlockOwnerShip.save(blockOwnerShipsMaterial);
 
         if (saveTask != null)
             saveTask.shutdown();
@@ -1047,9 +1047,8 @@ public final class Jobs extends JavaPlugin {
         List<JobProgression> progression = jPlayer.getJobProgression();
         int numjobs = progression.size();
 
-        if (!Jobs.getGCManager().useBlockProtectionBlockTracker && !Jobs.getExploitManager().isProtectionValidAddIfNotExists(jPlayer, info, block, true)) {
+        if (!Jobs.getGCManager().useBlockProtectionBlockTracker && !Jobs.getExploitManager().isProtectionValidAddIfNotExists(jPlayer, info, block, true))
             return;
-        }
 
         // no job
         if (numjobs == 0) {
